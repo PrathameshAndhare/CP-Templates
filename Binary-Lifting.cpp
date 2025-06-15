@@ -50,6 +50,16 @@ void bol_bacchan() {
         return u == v ? u : ancestors[u][0];
     };
 
+    auto kth_ancestor = [&](int x, int k) -> int {
+        for (int i = 0; i < LOG; i++) {
+            if (k & (1 << i)) {
+                x = ancestors[x][i];
+                if (x == 0) break;
+            }
+        }
+        return x == 0 ? -1 : x;
+    };
+
     auto dist = [&](int x, int y)->int{
         int lca = LCA(x, y);
         int dif = abs(depth[x] - depth[y]);
@@ -57,42 +67,6 @@ void bol_bacchan() {
         dif += 2 * (mn - depth[lca]);
         return dif;
     };
-
-    int mx_depth = 0, num1 = 0;
-    for(int i = 1; i <= n; i ++){
-        if(depth[i] > mx_depth){
-            mx_depth = depth[i];
-            num1 = i;
-        }
-    }
-
-    vector<int>depth2(n + 1);
-     auto dfs = [&](int node, int par, auto&& F)->void{
-        depth2[node] = depth2[par] + 1;
-        for(int adj : tree[node]){
-            if(adj != par){
-                F(adj, node, F);
-            }
-        }
-     };
-     dfs(num1, 0, dfs);
-
-     mx_depth = 0;
-     int num2 = 0;
-     for(int i = 1; i <= n; i ++){
-        if(depth2[i] > mx_depth){
-            mx_depth = depth2[i];
-            num2 = i;
-        }
-    }
-
-    for(int i = 1; i <= n; i ++){
-        int dist1 = dist(i, num1);
-        int dist2 = dist(i, num2);
-        cout << max(dist1, dist2) << ' ';
-    }
-    cout << endl;
-
 }
 
 signed main() {
